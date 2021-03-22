@@ -1,12 +1,12 @@
 const { Router } = require('express')
-const ExampleController = require('../controller/ExampleController')
+const OrdersController = require('../controller/OrdersController')
 
 const router = Router()
 
-router.post('/', ExampleController.getAllExamples) //criar um novo pedido
-router.get('/', ExampleController.getAllExamples) // pegar todos os pedidos
-router.put('/:id', ExampleController.getAllExamples) //alterar informações de 1 pedido específico
-router.get('/:id', ExampleController.getAllExamples) //pegar um pedido específico
-router.delete('/:id', ExampleController.getAllExamples) //deletar um pedido
+router.post('/', OrdersController.getAllOrders) //criar um novo pedido
+router.get('/', OrdersController.getAllOrders) // pegar todos os pedidos
+router.put('/:id', OrdersController.getAllOrders) //alterar informações de 1 pedido específico
+router.get('/:id', OrdersController.getAllOrders) //pegar um pedido específico
+router.delete('/:id', OrdersController.getAllOrders) //deletar um pedido
 
 module.exports = router

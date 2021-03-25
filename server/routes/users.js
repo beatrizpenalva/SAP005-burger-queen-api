@@ -1,12 +1,12 @@
 const { Router } = require('express')
-const ExampleController = require('../controller/ExampleController')
+const UserController = require('../controller/UserController')
 
 const router = Router()
 
-router.post('/', ExampleController.getAllExamples) //criar um novo usuário
-router.get('/', ExampleController.getAllExamples) //pegar todos os usuários
-router.put('/:id', ExampleController.getAllExamples) //alterar informações de 1 usuário específico
-router.get('/:id', ExampleController.getAllExamples) //pegar um usuário
-router.delete('/:id', ExampleController.getAllExamples) //deletar um usuário
+router.post('/', UserController.postUser)
+router.get('/', UserController.getAllUsers)
+//router.put('/:id', UserController.getAllExamples) //alterar informações de 1 usuário específico
+router.get('/:id', UserController.getUserById)
+router.delete('/:id', UserController.deleteUser)
 
 module.exports = router

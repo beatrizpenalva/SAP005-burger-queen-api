@@ -8,7 +8,7 @@ class UserController {
   }
 
   static async getUserById(req, res) {
-    const { usersId } = req.params //o nome dessa const precisa ser igual ao req.param que passamos na rota!
+    const { usersId } = req.params
     const user = await database.Users.findAll({
       where: {
         id: Number(usersId)
@@ -18,7 +18,7 @@ class UserController {
   }
 
   static async postUser(req, res) {
-    const { name, email, password, role, restaurant } = req.params //o nome dessa const precisa ser igual ao req.param que passamos na rota!
+    const { name, email, password, role, restaurant } = req.body
     const createUser = await database.Users.create({
       name,
       email,
@@ -26,11 +26,22 @@ class UserController {
       role,
       restaurant
     });
-    return res.status(201).json(createUser) //return with ID -> 201 (CREATED)
+    return res.status(201).json(createUser)
   }
 
+  static async updateUser(req, res) {
+    const { usersId } = req.params
+    const { name, password, role } = req.body
+      await database.Users.update({ name: name, password: password, role: role }, {
+        where: {
+          id: Number(usersId)
+        }  
+      })
+    }
+
+
   static async deleteUser(req, res) {
-    const { usersId } = req.params //o nome dessa const precisa ser igual ao req.param que passamos na rota!
+    const { usersId } = req.params 
     const user = await database.Users.findAll({
       where: {
         id: Number(usersId)
@@ -40,13 +51,4 @@ class UserController {
   }
 
 }  
-
-
-// const jane = await User.create({ name: "Jane" });
-// console.log(jane.name); // "Jane"
-// jane.name = "Ada";
-// // the name is still "Jane" in the database
-// await jane.save();
-// // Now the name was updated to "Ada" in the database!
-
 module.exports = UserController

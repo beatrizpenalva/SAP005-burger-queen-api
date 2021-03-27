@@ -3,10 +3,10 @@ const UserController = require('../controller/UserController')
 
 const router = Router()
 
-router.post('/', UserController.postUser)
-router.get('/', UserController.getAllUsers)
-//router.put('/:id', UserController.getAllExamples) //alterar informações de 1 usuário específico
-router.get('/:id', UserController.getUserById)
-router.delete('/:id', UserController.deleteUser)
+router.post('/', UserController.post)
+router.get('/', UserController.get)
+router.put('/:id', UserController.update)
+router.get('/:id', UserController.getById)
+router.delete('/:id', UserController.delete)
 
 module.exports = router

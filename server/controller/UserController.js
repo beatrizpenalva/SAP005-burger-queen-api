@@ -2,53 +2,74 @@ const database = require('../db/models')
 
 class UserController {
 
-  static async getAllUsers(req, res) {
-    const users = await database.Users.findAll()
-    return res.status(200).json(users)
+  static get(req, res, next) {
+    const users = database.Users.findAll()
+    users
+      .then((result) => {
+        res.status(200).json(result)
+      })
+      .catch((err) => next({code:403, err}));
   }
 
-  static async getUserById(req, res) {
+  static getById(req, res, next) {
     const { usersId } = req.params
-    const user = await database.Users.findAll({
+    const user = database.Users.findAll({
       where: {
         id: Number(usersId)
       }
     });
-    return res.status(200).json(user)
+    user
+      .then((result) => {
+        res.status(200).json(result)
+      })
+      .catch((err) => next({code:403, err}));
   }
 
-  static async postUser(req, res) {
+  static post(req, res, next) {
     const { name, email, password, role, restaurant } = req.body
-    const createUser = await database.Users.create({
+    const createUser = database.Users.create({
       name,
       email,
       password,
       role,
       restaurant
     });
-    return res.status(201).json(createUser)
+    createUser
+      .then((result) => {
+        return res.status(201).json(result)
+    })
+      .catch(next)
   }
 
-  static async updateUser(req, res) {
+  static update(req, res, next) {
     const { usersId } = req.params
     const { name, password, role } = req.body
-      await database.Users.update({ name: name, password: password, role: role }, {
+    const updateUser = database.Users.update({ name: name, password: password, role: role }, {
         where: {
           id: Number(usersId)
         }  
+    })
+    updateUser
+      .then((result)=> {
+        return res.status(200).json(result)
       })
+      .catch(next)
     }
 
 
-  static async deleteUser(req, res) {
+  static delete(req, res, next) {
     const { usersId } = req.params 
-    const user = await database.Users.findAll({
+    const user = database.Users.findAll({
       where: {
         id: Number(usersId)
       }
     });
-    await user.destroy();
+    user
+      .then((result) => {
+        result.destroy();
+      })
+      .catch(next);
   }
+}
 
-}  
 module.exports = UserController

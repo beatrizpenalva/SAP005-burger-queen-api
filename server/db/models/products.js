@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Name is required",
           },
-        },
+        }
       },
       price: {
         type: DataTypes.INTEGER,
@@ -37,22 +37,20 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Price is required",
           },
-        },
+        }
       },
       menu: {
-        name: {
-          type: DataTypes.STRING,
-          allowNull: false,
-          notEmpty: true,
-          validate: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        notEmpty: true,
+        validate: {
             notEmpty: {
               msg: "Menu can not be empty",
             },
             notNull: {
               msg: "Menu is required",
             },
-          },
-        },
+        }
       },
       type: {
         type: DataTypes.STRING,
@@ -65,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Type is required",
           },
-        },
+        }
       },
       flavor: DataTypes.STRING,
       restaurant: {
@@ -79,7 +77,7 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Restaurant is required",
           },
-        },
+        }
       },
     },
     {

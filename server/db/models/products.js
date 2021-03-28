@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Products extends Model {
     /**
@@ -12,17 +10,82 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
-  };
-  Products.init({
-    name: DataTypes.STRING,
-    price: DataTypes.INTEGER,
-    menu: DataTypes.STRING,
-    type: DataTypes.STRING,
-    flavor: DataTypes.STRING,
-    restaurant: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Products',
-  });
+  }
+  Products.init(
+    {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        notEmpty: true,
+        validate: {
+          notEmpty: {
+            msg: "Name can not be empty",
+          },
+          notNull: {
+            msg: "Name is required",
+          },
+        },
+      },
+      price: {
+        type: DDataTypes.INTEGER,
+        allowNull: false,
+        notEmpty: true,
+        validate: {
+          notEmpty: {
+            msg: "Price can not be empty",
+          },
+          notNull: {
+            msg: "Price is required",
+          },
+        },
+      },
+      menu: {
+        name: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          notEmpty: true,
+          validate: {
+            notEmpty: {
+              msg: "Menu can not be empty",
+            },
+            notNull: {
+              msg: "Menu is required",
+            },
+          },
+        },
+      },
+      type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        notEmpty: true,
+        validate: {
+          notEmpty: {
+            msg: "Type can not be empty",
+          },
+          notNull: {
+            msg: "Type is required",
+          },
+        },
+      },
+      flavor: DataTypes.STRING,
+      restaurant: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        notEmpty: true,
+        validate: {
+          notEmpty: {
+            msg: "Restaurant can not be empty",
+          },
+          notNull: {
+            msg: "Restaurant is required",
+          },
+        },
+      },
+    },
+    {
+      sequelize,
+      modelName: "Products",
+    }
+  );
   return Products;
 };

@@ -1,12 +1,12 @@
 const { Router } = require('express')
-const ExampleController = require('../controller/ExampleController')
+const ProductsController = require('../controller/ProductsController')
 
 const router = Router()
 
-router.post('/', ExampleController.getAllExamples) //postar um novo produto
-router.get('/', ExampleController.getAllExamples) //pegar todos os produtos
-router.put('/:id', ExampleController.getAllExamples) //alterar informações de 1 produto específico
-router.get('/:id', ExampleController.getAllExamples) //pegar um produto específico
-router.delete('/:id', ExampleController.getAllExamples) //deletar um produto específico
+router.post('/', ProductsController.post)
+router.get('/', ProductsController.get)
+router.put('/:id', ProductsController.update)
+router.get('/:id', ProductsController.getById)
+router.delete('/:id', ProductsController.delete)
 
 module.exports = router

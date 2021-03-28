@@ -13,12 +13,12 @@ class UserController {
   }
 
   static getById(req, res, next) {
-    const { usersId } = req.params;
+    const { id } = req.params;
     const user = database.Users.findAll(
       { attributes: { exclude: ["password"] } },
       {
         where: {
-          id: Number(usersId),
+          id: Number(id),
         },
       }
     );
@@ -46,13 +46,13 @@ class UserController {
   }
 
   static update(req, res, next) {
-    const { usersId } = req.params;
+    const { id } = req.params;
     const { name, password, role } = req.body;
     const updateUser = database.Users.update(
       { name: name, password: password, role: role },
       {
         where: {
-          id: Number(usersId),
+          id: Number(id),
         },
       }
     );
@@ -64,15 +64,15 @@ class UserController {
   }
 
   static delete(req, res, next) {
-    const { usersId } = req.params;
-    const user = database.Users.findAll({
+    const { id } = req.params;
+    const user = database.Users.destroy({
       where: {
-        id: Number(usersId),
+        id: Number(id),
       },
     });
     user
       .then((result) => {
-        result.destroy();
+        return res.status(200).json(result);
       })
       .catch(next);
   }

@@ -11,12 +11,12 @@ class OrdersController {
   // }
 
   static get(req, res, next) {
-    const orders = database.Orders.findAll({
+    let orders = database.Orders.findAll({
       include:
         [{
           model: database.Products,
           as: 'orders',
-          // required: false,
+          required: false,
           attributes: ['id', 'name', 'price', 'flavor'],
           through: {
             model: database.OrderProducts,
@@ -25,6 +25,7 @@ class OrdersController {
           }
         }]
     });
+
     orders
       .then((result) => {
         let allOrders = result;
@@ -55,14 +56,36 @@ class OrdersController {
 
   static getById(req, res, next) {
     const { id } = req.params;
-    const order = database.Orders.findAll({
-      where: {
-        id: Number(id),
+
+    const order = await Orders.findOne({
+      where: { id: Number(id) },
+      include: {
+        model: Products,
+        as: 'products',
+        attributes: ['id', 'name', 'flavor', 'price', 'menu', 'image', 'type'],
+        through: {
+          model: OrderProducts,
+          as: 'quantity',
+          attributes: ['quantity'],
+        },
       },
     });
+
     order
       .then((result) => {
-        res.status(200).json(result);
+        const orderById = result.toJSON();
+
+        const listOfOrderProducts = orderById.products.map((product) => ({
+          ...product,
+          quantity: product.quantity.quantity,
+        }));
+    
+        const completeOrder = {
+          ...order,
+          products: listOfOrderProducts,
+        };
+
+        return res.status(200).json(completeOrder);
       })
       .catch((err) => next({ code: 403, err }));
   }

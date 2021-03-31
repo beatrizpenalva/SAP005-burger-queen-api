@@ -1,70 +1,52 @@
 const database = require("../db/models");
 
 class OrdersController {
-  // static get(req, res, next) {
-  //   const orders = database.Orders.findAll();
-  //   orders
-  //     .then((result) => {
-  //       res.status(200).json(result);
-  //     })
-  //     .catch((err) => next({ code: 403, err }));
-  // }
-
   static get(req, res, next) {
-    let orders = database.Orders.findAll({
+    const orders = database.Orders.findAll({
       include:
         [{
           model: database.Products,
-          as: 'orders',
-          required: false,
-          attributes: ['id', 'name', 'price', 'flavor'],
+          as: 'products',
+          attributes: ['id', 'name', 'flavor', 'price', 'menu', 'type'],
           through: {
             model: database.OrderProducts,
-            as: 'orderProductsQt',
-            attributes: ['qt']
+            as: 'quantity',
+            attributes: ['quantity']
           }
         }]
     });
 
     orders
-      .then((result) => {
-        let allOrders = result;
-        allOrders.map(order => {
-          return {
-            "orderId": order.id,
-            "client": order.client,
-            "table": order.table,
-            "status": order.status,
-            "createAt": order.createAt,
-            "updateAt": order.updateAt,
-            "products": order.Orders.map(product => {
-              return {
-                "id": product.id,
-                "name": product.name,
-                "qt": product.orderProductsQt.qt,
-                "price": product.price,
-                "flavor": product.flavor
-              }
-            })
-          }
+      .then(async (result) => {
+        const ordersObjects = await result.map((order) => (
+          order.toJSON()
+        ))
+
+        const allOrders = ordersObjects.map((order) => ({
+          ...order, 
+          products: order.products.map((product) => ({
+            ...product, 
+            quantity: product.quantity.quantity,
+          }))
         })
+        )
+
         res.status(200).json(allOrders);
       })
       .catch((err) => next({ code: 403, err }));
   }
 
-
   static getById(req, res, next) {
     const { id } = req.params;
 
-    const order = await Orders.findOne({
+    const order = database.Orders.findOne({
       where: { id: Number(id) },
       include: {
-        model: Products,
+        model: database.Products,
         as: 'products',
-        attributes: ['id', 'name', 'flavor', 'price', 'menu', 'image', 'type'],
+        attributes: ['id', 'name', 'flavor', 'price', 'menu', 'type'],
         through: {
-          model: OrderProducts,
+          model: database.OrderProducts,
           as: 'quantity',
           attributes: ['quantity'],
         },
@@ -72,8 +54,8 @@ class OrdersController {
     });
 
     order
-      .then((result) => {
-        const orderById = result.toJSON();
+      .then(async (result) => {
+        const orderById = await result.toJSON();
 
         const listOfOrderProducts = orderById.products.map((product) => ({
           ...product,
@@ -81,7 +63,7 @@ class OrdersController {
         }));
     
         const completeOrder = {
-          ...order,
+          ...orderById,
           products: listOfOrderProducts,
         };
 

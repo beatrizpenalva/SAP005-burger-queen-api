@@ -1,14 +1,57 @@
 const database = require("../db/models");
 
 class OrdersController {
+  // static get(req, res, next) {
+  //   const orders = database.Orders.findAll();
+  //   orders
+  //     .then((result) => {
+  //       res.status(200).json(result);
+  //     })
+  //     .catch((err) => next({ code: 403, err }));
+  // }
+
   static get(req, res, next) {
-    const orders = database.Orders.findAll();
+    const orders = database.Orders.findAll({
+      include:
+        [{
+          model: database.Products,
+          as: 'orders',
+          // required: false,
+          attributes: ['id', 'name', 'price', 'flavor'],
+          through: {
+            model: database.OrderProducts,
+            as: 'orderProductsQt',
+            attributes: ['qt']
+          }
+        }]
+    });
     orders
       .then((result) => {
-        res.status(200).json(result);
+        let allOrders = result;
+        allOrders.map(order => {
+          return {
+            "orderId": order.id,
+            "client": order.client,
+            "table": order.table,
+            "status": order.status,
+            "createAt": order.createAt,
+            "updateAt": order.updateAt,
+            "products": order.Orders.map(product => {
+              return {
+                "id": product.id,
+                "name": product.name,
+                "qt": product.orderProductsQt.qt,
+                "price": product.price,
+                "flavor": product.flavor
+              }
+            })
+          }
+        })
+        res.status(200).json(allOrders);
       })
       .catch((err) => next({ code: 403, err }));
   }
+
 
   static getById(req, res, next) {
     const { id } = req.params;
@@ -25,32 +68,32 @@ class OrdersController {
   }
 
   static post(req, res, next) {
-    // const {
-    //   table,
-    //   client,
-    //   totalPrice,
-    //   attendant_id,
-    //   chef_id,
-    //   status,
-    //   comments,
-    //   processedAt,
-    // } = req.body;
+    const {
+      table,
+      client,
+      totalPrice,
+      attendant_id,
+      chef_id,
+      status,
+      comments,
+      processedAt,
+      products,
+    } = req.body;
 
-    // const createorder = database.orders.create({
-    //   table,
-    //   client,
-    //   totalPrice,
-    //   attendant_id,
-    //   chef_id,
-    //   status,
-    //   comments,
-    //   processedAt,
-    // });
+    const createOrder = database.Orders.create({
+      table,
+      client,
+      totalPrice,
+      attendant_id,
+      chef_id,
+      status,
+      comments,
+      processedAt,
+    });
 
-    const createOrder = database.Orders.create(req.body)
     createOrder
       .then((result) => {
-        req.body.Products.forEach(async (item) => {
+        products.forEach(async (item) => {
           // const product = await Product.findById(item.id);
           //const product = database.Orders.findByPk(item.id) //
           // if (!product) {
@@ -63,15 +106,9 @@ class OrdersController {
             quantity: item.quantity,
           };
 
-          await database.OrderProducts.create(
-            listOfProducts
-          );
-
-          // createOrderProducts.then((result) => {
-          //   return res.status(201).json(result);
-          // });
+          await database.OrderProducts.create(listOfProducts);
         });
-        
+
         return res.status(201).json(result);
       })
       .catch(next);
@@ -79,9 +116,9 @@ class OrdersController {
 
   static update(req, res, next) {
     const { id } = req.params;
-    const { price, menu, flavor, restaurant } = req.body;
-    const updateorder = database.orders.update(
-      { price: price, menu: menu, flavor: flavor, restaurant: restaurant },
+    const { status, processedAt } = req.body;
+    const updateorder = database.Orders.update(
+      { status: status, processedAt: processedAt },
       {
         where: {
           id: Number(id),
@@ -97,7 +134,7 @@ class OrdersController {
 
   static delete(req, res, next) {
     const { id } = req.params;
-    const order = database.orders.destroy({
+    const order = database.Orders.destroy({
       where: {
         id: Number(id),
       },

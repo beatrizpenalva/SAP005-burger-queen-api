@@ -12,7 +12,7 @@ class ProductsController {
 
   static getById(req, res, next) {
     const { id } = req.params;
-    const product = database.Products.findAll({
+    const product = database.Products.findOne({
       where: {
         id: Number(id),
       },

@@ -2,13 +2,12 @@
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Products extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      Products.belongsToMany(models.Orders, {
+        through: "OrderProducts",
+        as: "orders",
+        foreignKey: "product_id",
+      });
     }
   }
   Products.init(
@@ -24,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Name is required",
           },
-        }
+        },
       },
       price: {
         type: DataTypes.INTEGER,
@@ -37,20 +36,20 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Price is required",
           },
-        }
+        },
       },
       menu: {
         type: DataTypes.STRING,
         allowNull: false,
         notEmpty: true,
         validate: {
-            notEmpty: {
-              msg: "Menu can not be empty",
-            },
-            notNull: {
-              msg: "Menu is required",
-            },
-        }
+          notEmpty: {
+            msg: "Menu can not be empty",
+          },
+          notNull: {
+            msg: "Menu is required",
+          },
+        },
       },
       type: {
         type: DataTypes.STRING,
@@ -63,7 +62,7 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Type is required",
           },
-        }
+        },
       },
       flavor: DataTypes.STRING,
       restaurant: {
@@ -77,7 +76,7 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Restaurant is required",
           },
-        }
+        },
       },
     },
     {

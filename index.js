@@ -7,13 +7,14 @@ app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 app.use("*", (req, res, next) => {
-  console.log(req.method, req.baseUrl, req.body);
+  // console.log(req.method, req.baseUrl, req.body);
   next();
 });
 
 app.use("/", routes);
 
 app.use((err, req, res, next) => {
+  console.log(err)
   const errors = {
     400: "bad request",
     401: "unauthorized",
@@ -31,3 +32,7 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
+
+// catch (error) {
+//   return res.status(400).json({ code: 400, message: error.message});
+// }

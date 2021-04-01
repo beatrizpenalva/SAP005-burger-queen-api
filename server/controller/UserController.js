@@ -14,7 +14,7 @@ class UserController {
 
   static getById(req, res, next) {
     const { id } = req.params;
-    const user = database.Users.findAll(
+    const user = database.Users.findOne(
       { attributes: { exclude: ["password"] } },
       {
         where: {

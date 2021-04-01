@@ -3,33 +3,31 @@ const database = require("../db/models");
 class OrdersController {
   static get(req, res, next) {
     const orders = database.Orders.findAll({
-      include:
-        [{
+      include: [
+        {
           model: database.Products,
-          as: 'products',
-          attributes: ['id', 'name', 'flavor', 'price', 'menu', 'type'],
+          as: "products",
+          attributes: ["id", "name", "flavor", "price", "menu", "type"],
           through: {
             model: database.OrderProducts,
-            as: 'quantity',
-            attributes: ['quantity']
-          }
-        }]
+            as: "quantity",
+            attributes: ["quantity"],
+          },
+        },
+      ],
     });
 
     orders
       .then(async (result) => {
-        const ordersObjects = await result.map((order) => (
-          order.toJSON()
-        ))
+        const ordersObjects = await result.map((order) => order.toJSON());
 
         const allOrders = ordersObjects.map((order) => ({
-          ...order, 
+          ...order,
           products: order.products.map((product) => ({
-            ...product, 
+            ...product,
             quantity: product.quantity.quantity,
-          }))
-        })
-        )
+          })),
+        }));
 
         res.status(200).json(allOrders);
       })
@@ -43,12 +41,12 @@ class OrdersController {
       where: { id: Number(id) },
       include: {
         model: database.Products,
-        as: 'products',
-        attributes: ['id', 'name', 'flavor', 'price', 'menu', 'type'],
+        as: "products",
+        attributes: ["id", "name", "flavor", "price", "menu", "type"],
         through: {
           model: database.OrderProducts,
-          as: 'quantity',
-          attributes: ['quantity'],
+          as: "quantity",
+          attributes: ["quantity"],
         },
       },
     });
@@ -61,7 +59,7 @@ class OrdersController {
           ...product,
           quantity: product.quantity.quantity,
         }));
-    
+
         const completeOrder = {
           ...orderById,
           products: listOfOrderProducts,
@@ -122,7 +120,7 @@ class OrdersController {
   static update(req, res, next) {
     const { id } = req.params;
     const { status, processedAt } = req.body;
-    const updateorder = database.Orders.update(
+    const updateOrder = database.Orders.update(
       { status: status, processedAt: processedAt },
       {
         where: {
@@ -130,7 +128,7 @@ class OrdersController {
         },
       }
     );
-    updateorder
+    updateOrder
       .then((result) => {
         return res.status(200).json(result);
       })
@@ -139,14 +137,24 @@ class OrdersController {
 
   static delete(req, res, next) {
     const { id } = req.params;
+
+    const orderProducts = database.OrderProducts.destroy({
+      where: {
+        order_id: Number(id),
+      },
+    });
+
     const order = database.Orders.destroy({
       where: {
         id: Number(id),
       },
     });
-    order
-      .then((result) => {
-        return res.status(200).json(result);
+
+    orderProducts
+      .then(() => {
+        order.then((result) => {
+          return res.status(200).json(result);
+        });
       })
       .catch(next);
   }

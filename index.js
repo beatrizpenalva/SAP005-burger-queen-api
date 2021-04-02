@@ -13,7 +13,6 @@ app.use("*", (req, res, next) => {
 app.use("/", routes);
 
 app.use((err, req, res, next) => {
-  console.log(err);
   const message = {
     400: "Bad request",
     401: "Missing required data",

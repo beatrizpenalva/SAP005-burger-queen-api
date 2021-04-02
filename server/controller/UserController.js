@@ -44,23 +44,21 @@ class UserController {
       return res.status(401).json({ message: "Missing required data." });
     }
 
-    const createUser = database.Users.findOrcreate({
+    const createUser = database.Users.findOrCreate({
       where: { email },
       defaults: { name, email, password, role, restaurant },
-      // attributes: {
-      //   exclude: ["password"],
-      // },
     });
 
     createUser
       .then((result) => {
-        // const newUser = result.email;
+        const [userObj, status] = result;
+        const { password, ...user } = userObj.toJSON();
 
-        // // if (!newUser) {
-        // //   return res.status(403).json(next({ code: 403, err }));
-        // // }
-
-        return res.status(201).json(result);
+        if (status) {
+          return res.status(201).json(user);
+        } else {
+          return res.status(403).json({ code: 403, msg: "Email already used" });
+        }
       })
       .catch((err) => next({ code: 400, err }));
   }

@@ -4,12 +4,12 @@ module.exports = (sequelize, DataTypes) => {
   class Orders extends Model {
     static associate(models) {
       Orders.belongsToMany(models.Products, {
-        through: 'OrderProducts',
-        as: 'products',
-        foreignKey: 'order_id'
+        through: "OrderProducts",
+        as: "products",
+        foreignKey: "order_id",
       });
 
-    //   Orders.belongsTo(models.Users);
+      Orders.belongsTo(models.Users);
     }
   }
 

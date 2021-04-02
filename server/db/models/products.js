@@ -8,6 +8,8 @@ module.exports = (sequelize, DataTypes) => {
         as: "orders",
         foreignKey: "product_id",
       });
+
+      Products.belongsTo(models.OrderProducts);
     }
   }
   Products.init(

@@ -8,22 +8,35 @@ module.exports = (sequelize, DataTypes) => {
         as: "products",
         foreignKey: "order_id",
       });
-
-      Orders.belongsTo(models.Users);
     }
   }
 
   Orders.init(
     {
-      table: DataTypes.INTEGER,
-      client: DataTypes.STRING,
-      totalPrice: DataTypes.INTEGER,
-      attendant_id: DataTypes.INTEGER,
-      chef_id: DataTypes.INTEGER,
-      status: DataTypes.STRING,
-      comments: DataTypes.STRING,
-      processedAt: DataTypes.TIME,
-      updateAt: DataTypes.TIME,
+      table: {
+        type: DataTypes.INTEGER,
+      },
+      client: {
+        type: DataTypes.STRING,
+      },
+      totalPrice: {
+        type: DataTypes.INTEGER,
+      },
+      attendant_id: {
+        type: DataTypes.INTEGER,
+      },
+      status: {
+        type: DataTypes.STRING,
+      },
+      comments: {
+        type: DataTypes.STRING,
+      },
+      processedAt: {
+        type: DataTypes.STRING,
+      },
+      restaurant:{
+        type: DataTypes.STRING,
+      }
     },
     {
       sequelize,

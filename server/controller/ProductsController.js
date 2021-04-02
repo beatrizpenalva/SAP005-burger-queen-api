@@ -1,7 +1,12 @@
 const database = require("../db/models");
 
 class ProductsController {
-  static get(req, res, next) {
+  static productExist(id) {
+    const searchById = database.Users.findByPk(id);
+    return searchById;
+  }
+
+  static getAllProducts(req, res, next) {
     const products = database.Products.findAll({
       order: [['id', 'ASC']],
     });
@@ -12,7 +17,7 @@ class ProductsController {
       .catch((err) => next({ code: 403, err }));
   }
 
-  static getById(req, res, next) {
+  static getProductById(req, res, next) {
     const { id } = req.params;
     const product = database.Products.findOne({
       where: {
@@ -26,26 +31,41 @@ class ProductsController {
       .catch((err) => next({ code: 403, err }));
   }
 
-  static post(req, res, next) {
+  static postProduct(req, res, next) {
     const { name, price, menu, type, flavor, restaurant } = req.body;
-    const createProduct = database.Products.create({
-      name,
-      price,
-      menu,
-      type,
-      flavor,
-      restaurant
+
+    if (!name || !price || !menu || !type || !restaurant) {
+      return res.status(401).json({ message: "Missing required data." });
+    }
+
+    const createProduct = database.Products.findOrCreate({
+      where: { name },
+      defaults: { name, price, menu, type, flavor, restaurant }
     });
+
     createProduct
       .then((result) => {
-        return res.status(201).json(result);
+        const [productObj, status] = result;
+
+        if (status) {
+          return res.status(201).json(productObj.toJSON());
+        } else {
+          return res.status(403).json({ code: 403, msg: "Email already used" });
+        }
       })
       .catch(next);
   }
 
-  static update(req, res, next) {
+  static updateProduct(req, res, next) {
     const { id } = req.params;
     const { price, menu, flavor, restaurant } = req.body;
+    
+    const isRegistred = await ProductsController.productExist(id);
+
+    if (!isRegistred) {
+      return res.status(404).json({ code: 404, message: "Product not found." });
+    }
+
     const updateProduct = database.Products.update(
       { price: price, menu: menu, flavor: flavor, restaurant: restaurant },
       {
@@ -54,6 +74,7 @@ class ProductsController {
         },
       }
     );
+
     updateProduct
       .then((result) => {
         return res.status(200).json(result);
@@ -61,13 +82,21 @@ class ProductsController {
       .catch(next);
   }
 
-  static delete(req, res, next) {
+  static deleteProduct(req, res, next) {
     const { id } = req.params;
+
+    const isRegistred = await ProductsController.productExist(id);
+
+    if (!isRegistred) {
+      return res.status(404).json({ code: 404, message: "Product not found." });
+    }
+
     const product = database.Products.destroy({
       where: {
         id: Number(id),
       },
     });
+
     product
       .then((result) => {
         return res.status(200).json(result);

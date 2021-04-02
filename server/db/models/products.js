@@ -9,7 +9,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "product_id",
       });
 
-      Products.belongsTo(models.OrderProducts);
+      Products.hasMany(models.OrderProducts, {
+        foreignKey: "extra_id",
+      });
     }
   }
   Products.init(
@@ -80,6 +82,9 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      image: {
+        type: DataTypes.STRING
+      }  
     },
     {
       sequelize,

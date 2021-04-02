@@ -3,16 +3,23 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class OrderProducts extends Model {
     static associate(models) {
-      OrderProducts.hasMany(models.Products, {
-        foreignKey: "extra_id",
-      });
+      OrderProducts.belongsTo(models.Products);
     }
   }
   OrderProducts.init(
     {
-      order_id: DataTypes.INTEGER,
-      product_id: DataTypes.INTEGER,
-      quantity: DataTypes.INTEGER,
+      order_id: {
+        type: DataTypes.INTEGER,
+      },
+      product_id: {
+        type: DataTypes.INTEGER,
+      },
+      quantity:{
+        type: DataTypes.INTEGER,
+      },
+      extra_id: {
+        type: DataTypes.INTEGER,
+      }
     },
     {
       sequelize,

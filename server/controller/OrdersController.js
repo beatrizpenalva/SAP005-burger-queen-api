@@ -1,7 +1,12 @@
 const database = require("../db/models");
 
 class OrdersController {
-  static get(req, res, next) {
+  static orderExist(id) {
+    const searchById = database.Orders.findByPk(id);
+    return searchById;
+  }
+
+  static getAllOrders(req, res, next) {
     const orders = database.Orders.findAll({
       order: [['id', 'ASC']],
       include: [
@@ -32,10 +37,10 @@ class OrdersController {
 
         res.status(200).json(allOrders);
       })
-      .catch((err) => next({ code: 403, err }));
+      .catch((err) => next({ code: 400, err }));
   }
 
-  static getById(req, res, next) {
+  static getOrderById(req, res, next) {
     const { id } = req.params;
 
     const order = database.Orders.findOne({
@@ -46,20 +51,26 @@ class OrdersController {
         attributes: ["id", "name", "flavor", "price", "menu", "type"],
         through: {
           model: database.OrderProducts,
-          as: "quantity",
-          attributes: ["quantity"],
-        },
-      },
+          as: "addInfo",
+          attributes: ["extra_id", "quantity"]
+        }
+      }
     });
 
     order
       .then(async (result) => {
         const orderById = await result.toJSON();
 
-        const listOfOrderProducts = orderById.products.map((product) => ({
-          ...product,
-          quantity: product.quantity.quantity,
-        }));
+        const listOfOrderProducts = orderById.products.map((product) => {
+          const list = {
+            ...product,
+            quantity: product.addInfo.quantity,
+            extra_id: product.addInfo.extra_id
+          }
+
+          delete list.addInfo
+          return list
+        });
 
         const completeOrder = {
           ...orderById,
@@ -68,20 +79,20 @@ class OrdersController {
 
         return res.status(200).json(completeOrder);
       })
-      .catch((err) => next({ code: 403, err }));
+      .catch((err) => next({ code: 400, err }));
   }
 
-  static post(req, res, next) {
+  static postOrder(req, res, next) {
     const {
       table,
       client,
       totalPrice,
       attendant_id,
-      chef_id,
       status,
       comments,
       processedAt,
-      products,
+      restaurant,
+      products
     } = req.body;
 
     const createOrder = database.Orders.create({
@@ -89,24 +100,19 @@ class OrdersController {
       client,
       totalPrice,
       attendant_id,
-      chef_id,
       status,
       comments,
       processedAt,
+      restaurant
     });
 
     createOrder
       .then((result) => {
         products.forEach(async (item) => {
-          // const product = await Product.findById(item.id);
-          //const product = database.Orders.findByPk(item.id) //
-          // if (!product) {
-          //   return res.status(400);
-          // }
-
           const listOfProducts = {
             order_id: result.id,
             product_id: item.id,
+            extra_id:item.extra_id,
             quantity: item.quantity,
           };
 
@@ -118,9 +124,15 @@ class OrdersController {
       .catch(next);
   }
 
-  static update(req, res, next) {
+  static async updateOrder(req, res, next) {
     const { id } = req.params;
     const { status, processedAt } = req.body;
+    const isRegistred = await OrdersController.orderExist(id);
+
+    if (!isRegistred) {
+      return res.status(404).json({ code: 404, message: "Order not found." });
+    }
+
     const updateOrder = database.Orders.update(
       { status: status, processedAt: processedAt },
       {
@@ -129,6 +141,7 @@ class OrdersController {
         },
       }
     );
+
     updateOrder
       .then((result) => {
         return res.status(200).json(result);
@@ -136,8 +149,13 @@ class OrdersController {
       .catch(next);
   }
 
-  static delete(req, res, next) {
+  static async deleteOrder(req, res, next) {
     const { id } = req.params;
+    const isRegistred = await OrdersController.orderExist(id);
+
+    if (!isRegistred) {
+      return res.status(404).json({ code: 404, message: "Order not found." });
+    }
 
     const orderProducts = database.OrderProducts.destroy({
       where: {

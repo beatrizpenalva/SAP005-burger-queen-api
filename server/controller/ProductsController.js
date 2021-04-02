@@ -2,7 +2,7 @@ const database = require("../db/models");
 
 class ProductsController {
   static productExist(id) {
-    const searchById = database.Users.findByPk(id);
+    const searchById = database.Products.findByPk(id);
     return searchById;
   }
 
@@ -14,7 +14,7 @@ class ProductsController {
       .then((result) => {
         res.status(200).json(result);
       })
-      .catch((err) => next({ code: 403, err }));
+      .catch((err) => next({ code: 400, err }));
   }
 
   static getProductById(req, res, next) {
@@ -28,7 +28,7 @@ class ProductsController {
       .then((result) => {
         res.status(200).json(result);
       })
-      .catch((err) => next({ code: 403, err }));
+      .catch((err) => next({ code: 400, err }));
   }
 
   static postProduct(req, res, next) {
@@ -53,10 +53,10 @@ class ProductsController {
           return res.status(403).json({ code: 403, msg: "Email already used" });
         }
       })
-      .catch(next);
+      .catch((err) => next({ code: 400, err }));
   }
 
-  static updateProduct(req, res, next) {
+  static async updateProduct(req, res, next) {
     const { id } = req.params;
     const { price, menu, flavor, restaurant } = req.body;
     
@@ -79,10 +79,10 @@ class ProductsController {
       .then((result) => {
         return res.status(200).json(result);
       })
-      .catch(next);
+      .catch((err) => next({ code: 400, err }));
   }
 
-  static deleteProduct(req, res, next) {
+  static async deleteProduct(req, res, next) {
     const { id } = req.params;
 
     const isRegistred = await ProductsController.productExist(id);
@@ -101,7 +101,7 @@ class ProductsController {
       .then((result) => {
         return res.status(200).json(result);
       })
-      .catch(next);
+      .catch((err) => next({ code: 400, err }));
   }
 }
 

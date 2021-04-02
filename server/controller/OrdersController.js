@@ -3,6 +3,7 @@ const database = require("../db/models");
 class OrdersController {
   static get(req, res, next) {
     const orders = database.Orders.findAll({
+      order: [['id', 'ASC']],
       include: [
         {
           model: database.Products,

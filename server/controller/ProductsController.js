@@ -2,7 +2,9 @@ const database = require("../db/models");
 
 class ProductsController {
   static get(req, res, next) {
-    const products = database.Products.findAll();
+    const products = database.Products.findAll({
+      order: [['id', 'ASC']],
+    });
     products
       .then((result) => {
         res.status(200).json(result);

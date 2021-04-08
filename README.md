@@ -68,7 +68,9 @@ This API  offers an user endpoint, so then the restaurant employees can register
 
 For this system three basic models were created, users, products and orders. However, as the products table and orders table have a many-to-many relationship it was necessary to create a fourth table, order products, so we can list all products that were chosen for an order. 
 
-<img align='center'  width='350' src='./images/diagrama-db.png'></img>
+<p align="center">
+    <img src='./images/diagrama-db.png'></img>
+</p>
 
 ### 🚧 Future implementations
 

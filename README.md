@@ -101,7 +101,7 @@ For this system three basic models were created, users, products and orders. How
 
 ---
 
-## 👨🏻‍💻 Acknowledgments and credits
+## 👩‍💻 Acknowledgments and credits
 
 &nbsp;
 Project developed in [Laboratoria](https://www.laboratoria.la/) Bootcamp 💛

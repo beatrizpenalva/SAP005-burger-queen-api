@@ -42,10 +42,15 @@ This API  offers an user endpoint, so then the restaurant employees can register
 
 #### 👨‍🍳 `/users`
 
+&nbsp;
 * [ ] `GET /users`
+&nbsp;
 * [ ] `GET /users/:uid`
+&nbsp;
 * [ ] `POST /users`
+&nbsp;
 * [ ] `PUT /users/:uid`
+&nbsp;
 * [ ] `DELETE /users/:uid`
 
 #### 🍟 `/products`

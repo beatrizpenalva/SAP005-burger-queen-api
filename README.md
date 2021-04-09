@@ -18,7 +18,7 @@
 
 ---
 
-## 💪 Challenge
+## 🎯 Challenge
 
 Create a web server through a rest API with integration to a relational database, providing CRUD manipulation methods and following the Model View Controller (MVC) architecture model, using the stack: [Node.js](https://nodejs.org/), [Express](https://expressjs.com/), [Sequelize](https://sequelize.org) and [PostgreSQL](https://www.postgresql.org/docs/). 
 

@@ -6,7 +6,6 @@
     🌟 An API REST to create and save users, products and orders in a database. To access click <a href='https://burgerlicious-api.herokuapp.com/'>here</a>! 🌟 
 </p>    
     
-
 <p align="center">
  <a href="#challenge">Challenge</a> •
  <a href="#about">About</a> •
@@ -64,6 +63,8 @@ This API  offers an user endpoint, so then the restaurant employees can register
 * [ ] `PUT /orders/:orderid`
 * [ ] `DELETE /orders/:orderid`
 
+##
+
 ### 📂 Database
 
 For this system three basic models were created, users, products and orders. However, as the products table and orders table have a many-to-many relationship it was necessary to create a fourth table, order products, so we can list all products that were chosen for an order. 
@@ -71,6 +72,8 @@ For this system three basic models were created, users, products and orders. How
 <p align="center">
     <img src='./images/diagrama-db.png'></img>
 </p>
+
+##
 
 ### 🚧 Future implementations
 
